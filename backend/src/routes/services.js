@@ -1,0 +1,58 @@
+const express = require('express');
+const db = require('../config/database');
+const { authenticateToken } = require('../middleware/auth');
+
+const router = express.Router();
+
+router.get('/', (req, res) => {
+  db.all('SELECT * FROM services WHERE is_active = 1', [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+    const services = rows.map(row => ({
+      ...row,
+      name: JSON.parse(row.name),
+      description: JSON.parse(row.description)
+    }));
+    res.json(services);
+  });
+});
+
+router.post('/', authenticateToken, (req, res) => {
+  const { name, description, price } = req.body;
+  db.run(
+    'INSERT INTO services (name, description, price) VALUES (?, ?, ?)',
+    [JSON.stringify(name), JSON.stringify(description), price],
+    function(err) {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      res.json({ id: this.lastID, ...req.body });
+    }
+  );
+});
+
+router.put('/:id', authenticateToken, (req, res) => {
+  const { name, description, price, is_active } = req.body;
+  db.run(
+    'UPDATE services SET name = ?, description = ?, price = ?, is_active = ? WHERE id = ?',
+    [JSON.stringify(name), JSON.stringify(description), price, is_active, req.params.id],
+    function(err) {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      res.json({ message: 'Service updated' });
+    }
+  );
+});
+
+router.delete('/:id', authenticateToken, (req, res) => {
+  db.run('UPDATE services SET is_active = 0 WHERE id = ?', [req.params.id], function(err) {
+    if (err) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json({ message: 'Service deleted' });
+  });
+});
+
+module.exports = router;
