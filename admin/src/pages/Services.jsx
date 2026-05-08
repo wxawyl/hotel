@@ -20,7 +20,7 @@ const Services = () => {
   const fetchServices = async () => {
     try {
       const response = await axios.get('/api/services');
-      setServices(response.data);
+      setServices(response.data.data || response.data);
     } catch (err) {
       console.error('Error fetching services:', err);
     }

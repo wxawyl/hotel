@@ -15,14 +15,21 @@ const Settings = () => {
   const fetchSettings = async () => {
     try {
       const response = await axios.get('/api/settings');
+      const settingsData = response.data.data || response.data;
       const settingsObj = {};
-      response.data.forEach(s => {
-        try {
-          settingsObj[s.key] = JSON.parse(s.value);
-        } catch {
-          settingsObj[s.key] = s.value;
-        }
-      });
+      if (Array.isArray(settingsData)) {
+        settingsData.forEach(s => {
+          try {
+            settingsObj[s.key] = JSON.parse(s.value);
+          } catch {
+            settingsObj[s.key] = s.value;
+          }
+        });
+      } else {
+        Object.entries(settingsData).forEach(([key, value]) => {
+          settingsObj[key] = value;
+        });
+      }
       setSettings(settingsObj);
     } catch (err) {
       console.error('Error fetching settings:', err);
@@ -32,7 +39,7 @@ const Settings = () => {
   const fetchExchangeRates = async () => {
     try {
       const response = await axios.get('/api/settings/exchange-rates');
-      setExchangeRates(response.data);
+      setExchangeRates(response.data.data || response.data);
     } catch (err) {
       console.error('Error fetching exchange rates:', err);
     }

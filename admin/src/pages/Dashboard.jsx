@@ -23,10 +23,10 @@ const Dashboard = () => {
         axios.get('/api/services'),
       ]);
       setStats({
-        hotels: hotelsRes.data.length,
+        hotels: (hotelsRes.data.data || hotelsRes.data).length,
         rooms: 0,
-        bookings: bookingsRes.data.length,
-        services: servicesRes.data.length,
+        bookings: (bookingsRes.data.data || bookingsRes.data).length,
+        services: (servicesRes.data.data || servicesRes.data).length,
       });
     } catch (err) {
       console.error('Error fetching stats:', err);

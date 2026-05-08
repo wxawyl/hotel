@@ -32,10 +32,11 @@ const Rooms = () => {
   const fetchHotels = async () => {
     try {
       const response = await axios.get('/api/hotels');
-      setHotels(response.data);
-      if (response.data.length > 0) {
-        setSelectedHotel(response.data[0].id);
-        setFormData({ ...formData, hotel_id: response.data[0].id });
+      const hotelList = response.data.data || response.data;
+      setHotels(hotelList);
+      if (hotelList.length > 0) {
+        setSelectedHotel(hotelList[0].id);
+        setFormData({ ...formData, hotel_id: hotelList[0].id });
       }
     } catch (err) {
       console.error('Error fetching hotels:', err);
@@ -45,7 +46,7 @@ const Rooms = () => {
   const fetchRooms = async () => {
     try {
       const response = await axios.get(`/api/rooms/hotel/${selectedHotel}`);
-      setRooms(response.data);
+      setRooms(response.data.data || response.data);
     } catch (err) {
       console.error('Error fetching rooms:', err);
     }

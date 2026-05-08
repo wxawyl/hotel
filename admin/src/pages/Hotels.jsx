@@ -22,7 +22,7 @@ const Hotels = () => {
   const fetchHotels = async () => {
     try {
       const response = await axios.get('/api/hotels');
-      setHotels(response.data);
+      setHotels(response.data.data || response.data);
     } catch (err) {
       console.error('Error fetching hotels:', err);
     }

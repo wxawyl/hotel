@@ -13,7 +13,7 @@ const Bookings = () => {
   const fetchBookings = async () => {
     try {
       const response = await axios.get('/api/bookings');
-      setBookings(response.data);
+      setBookings(response.data.data || response.data);
     } catch (err) {
       console.error('Error fetching bookings:', err);
     }
