@@ -34,9 +34,10 @@ const Images = () => {
   const fetchHotels = async () => {
     try {
       const response = await axios.get('/api/hotels');
-      setHotels(response.data);
-      if (response.data.length > 0) {
-        setSelectedHotel(response.data[0].id);
+      const hotelList = response.data.value || response.data;
+      setHotels(hotelList);
+      if (hotelList.length > 0) {
+        setSelectedHotel(hotelList[0].id);
       }
     } catch (err) {
       console.error('Error fetching hotels:', err);
