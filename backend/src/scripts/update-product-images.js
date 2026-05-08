@@ -1,0 +1,33 @@
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('../database/hotel.db');
+
+const productImages = {
+  'Silk Scarf': 'https://images.unsplash.com/photo-1520975957996-972dec2617cf?w=300&h=300&fit=crop',
+  'Vietnamese Tea': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300&h=300&fit=crop',
+  'Fish Sauce': 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=300&h=300&fit=crop',
+};
+
+db.serialize(() => {
+  Object.entries(productImages).forEach(([name, imageUrl]) => {
+    db.run(
+      'UPDATE products SET image_url = ? WHERE name = ?',
+      [imageUrl, name],
+      function(err) {
+        if (err) {
+          console.error(`Error updating ${name}: ${err.message}`);
+        } else if (this.changes > 0) {
+          console.log(`Updated ${name} with new image`);
+        } else {
+          console.log(`Product ${name} not found`);
+        }
+      }
+    );
+  });
+});
+
+db.close((err) => {
+  if (err) {
+    console.error(err.message);
+  }
+  console.log('Database connection closed.');
+});

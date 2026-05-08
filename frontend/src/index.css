@@ -184,6 +184,185 @@ body {
   }
 }
 
+@keyframes bounceSlow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 2s ease-in-out infinite;
+}
+
+@keyframes idle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes walk {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(3deg);
+  }
+  75% {
+    transform: translateY(-5px) rotate(-3deg);
+  }
+}
+
+@keyframes run {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+  }
+  25% {
+    transform: translateY(-8px) scaleY(0.95);
+  }
+  50% {
+    transform: translateY(-3px) scaleY(1);
+  }
+  75% {
+    transform: translateY(-8px) scaleY(0.95);
+  }
+}
+
+@keyframes skip {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(-15px) scale(1.05);
+  }
+  50% {
+    transform: translateY(-5px) scale(0.98);
+  }
+  75% {
+    transform: translateY(-12px) scale(1.03);
+  }
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(20deg);
+  }
+  75% {
+    transform: rotate(-10deg);
+  }
+}
+
+.animate-idle {
+  animation: idle 2s ease-in-out infinite;
+}
+
+@keyframes idle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes walk {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(5px) translateY(-2px);
+  }
+  75% {
+    transform: translateX(-5px) translateY(-2px);
+  }
+}
+
+@keyframes dance {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  15% {
+    transform: rotate(-10deg) translateY(-5px);
+  }
+  30% {
+    transform: rotate(10deg) translateY(-8px);
+  }
+  45% {
+    transform: rotate(-5deg) translateY(-3px);
+  }
+  60% {
+    transform: rotate(5deg) translateY(-6px);
+  }
+  75% {
+    transform: rotate(-3deg) translateY(-2px);
+  }
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(10deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+}
+
+@keyframes sleep {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-5deg) scale(0.98);
+  }
+  75% {
+    transform: rotate(5deg) scale(0.98);
+  }
+}
+
+.animate-walk {
+  animation: walk 0.8s ease-in-out infinite;
+}
+
+.animate-dance {
+  animation: dance 1s ease-in-out infinite;
+}
+
+.animate-wave {
+  animation: wave 0.5s ease-in-out infinite;
+}
+
+.animate-sleep {
+  animation: sleep 3s ease-in-out infinite;
+}
+
+.animate-walk {
+  animation: walk 0.8s ease-in-out infinite;
+}
+
+.animate-run {
+  animation: run 0.5s ease-in-out infinite;
+}
+
+.animate-skip {
+  animation: skip 1s ease-in-out infinite;
+}
+
+.animate-wave {
+  animation: wave 0.6s ease-in-out infinite;
+  transform-origin: top right;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

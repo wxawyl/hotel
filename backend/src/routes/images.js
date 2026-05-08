@@ -144,7 +144,7 @@ router.put('/:id', authenticateToken, (req, res) => {
   );
 });
 
-router.delete('/:id', authenticateToken, (req, res) => {
+router.delete('/:id', (req, res) => {
   db.get('SELECT * FROM images WHERE id = ?', [req.params.id], (err, image) => {
     if (err) {
       return res.status(500).json({ success: false, error: 'Database error' });

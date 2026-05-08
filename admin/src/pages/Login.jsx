@@ -51,7 +51,7 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-ocean text-white py-3 rounded-lg font-medium hover:bg-opacity-90 transition"
+            className="w-full bg-ocean-500 text-white py-3 rounded-lg font-medium hover:bg-ocean-600 transition-all duration-200"
           >
             {t('login.submit')}
           </button>

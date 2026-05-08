@@ -1,0 +1,13 @@
+{
+  "name": "hotel-management-system",
+  "version": "1.0.0",
+  "description": "Hotel Management System - Frontend and Backend",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "dev": "cd backend && npm run dev",
+    "start": "cd backend && npm start"
+  },
+  "keywords": ["hotel", "management", "booking"],
+  "author": "",
+  "license": "MIT"
+}

@@ -16,7 +16,7 @@ const Contact = () => {
       setError(null);
     } catch (err) {
       setBooking(null);
-      setError('Booking not found');
+      setError(t('booking.not.found'));
     }
   };
 
@@ -37,12 +37,12 @@ const Contact = () => {
                     value={bookingNumber}
                     onChange={(e) => setBookingNumber(e.target.value)}
                     className="input"
-                    placeholder="Enter your booking number"
+                    placeholder={t('placeholder.booking')}
                     required
                   />
                 </div>
                 <button type="submit" className="btn-primary w-full">
-                  Find Booking
+                  {t('booking.find')}
                 </button>
               </form>
 
@@ -54,17 +54,17 @@ const Contact = () => {
 
               {booking && (
                 <div className="mt-4 p-6 bg-green-50 rounded-lg p-4">
-                  <h3 className="font-bold mb-2">Booking Found!</h3>
-                  <p><strong>Status:</strong> {booking.status}</p>
-                  <p><strong>Check-in:</strong> {booking.check_in}</p>
-                  <p><strong>Check-out:</strong> {booking.check_out}</p>
-                  <p><strong>Total:</strong> {booking.currency} {booking.total_price}</p>
+                  <h3 className="font-bold mb-2">{t('booking.found')}</h3>
+                  <p><strong>{t('booking.status')}:</strong> {booking.status}</p>
+                  <p><strong>{t('check.in')}:</strong> {booking.check_in}</p>
+                  <p><strong>{t('check.out')}:</strong> {booking.check_out}</p>
+                  <p><strong>{t('total.price')}:</strong> {booking.currency} {booking.total_price}</p>
                 </div>
               )}
             </section>
 
             <section className="card p-6">
-              <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
+              <h2 className="text-2xl font-bold mb-6">{t('contact.info')}</h2>
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-sand rounded-full flex items-center justify-center">
@@ -73,7 +73,7 @@ const Contact = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-medium">Email</p>
+                    <p className="font-medium">{t('contact.email')}</p>
                     <p className="text-gray-600">info@hoianhotels.com</p>
                   </div>
                 </div>
@@ -84,7 +84,7 @@ const Contact = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-medium">Phone</p>
+                    <p className="font-medium">{t('contact.phone')}</p>
                     <p className="text-gray-600">+84 123 456 789</p>
                   </div>
                 </div>
@@ -95,7 +95,7 @@ const Contact = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-medium">WhatsApp</p>
+                    <p className="font-medium">{t('contact.whatsapp')}</p>
                     <a
                       href="https://wa.me/84123456789"
                       target="_blank"
@@ -112,15 +112,49 @@ const Contact = () => {
 
           <div>
             <section className="card p-6">
-              <h2 className="text-2xl font-bold mb-6">Our Location</h2>
-              <div className="h-80 bg-gradient-to-br from-sand to-gray-200 rounded-lg flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <p>Map Placeholder</p>
-                  <p className="text-sm mt-2">Hoi An, Vietnam</p>
+              <h2 className="text-2xl font-bold mb-6">{t('contact.location')}</h2>
+              <div className="relative h-80 rounded-lg overflow-hidden">
+                <iframe
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=108.34469795227051%2C15.853593047082787%2C108.3500862121582%2C15.856646028268604&layer=mapnik"
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  className="w-full h-full"
+                  title="Hoi An Map"
+                ></iframe>
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md">
+                  <p className="font-medium">Hoi An Ancient Town</p>
+                  <p className="text-sm text-gray-600">Quang Nam, Vietnam</p>
+                </div>
+              </div>
+              <div className="mt-4 space-y-2">
+                <p className="font-medium">Hoi An Ancient Town, Quang Nam Province, Vietnam</p>
+                <p className="text-gray-600 text-sm">{t('contact.location.desc')}</p>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <a
+                    href="https://www.google.com/maps/search/Hoi+An+Ancient+Town,+Quang+Nam,+Vietnam"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-secondary text-sm px-4 py-2 flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Google Maps
+                  </a>
+                  <a
+                    href="https://www.openstreetmap.org/search?query=Hoi%20An%20Ancient%20Town%2C%20Quang%20Nam%2C%20Vietnam"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-secondary text-sm px-4 py-2 flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    OpenStreetMap
+                  </a>
                 </div>
               </div>
             </section>

@@ -12,6 +12,7 @@ const Navbar = () => {
   const navLinks = [
     { path: '/', label: 'nav.home' },
     { path: '/hotels', label: 'nav.hotels' },
+    { path: '/products', label: 'nav.products' },
     { path: '/book', label: 'nav.book' },
     { path: '/culture', label: 'nav.culture' },
     { path: '/contact', label: 'nav.contact' },
@@ -26,7 +27,7 @@ const Navbar = () => {
     { code: 'vi', name: 'VI' },
   ];
 
-  const currencies = ['USD', 'EUR', 'GBP', 'AUD', 'VND'];
+  const currencies = ['USD', 'VND'];
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);

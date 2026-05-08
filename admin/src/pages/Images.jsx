@@ -18,7 +18,6 @@ const Images = () => {
     'breakfast',
     'banner',
     'cultural',
-    'product',
   ];
 
   useEffect(() => {

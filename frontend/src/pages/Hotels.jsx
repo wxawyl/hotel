@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BookingContext } from '../contexts/BookingContext';
+import { getHotelImage } from '../utils/imageGenerator';
 
 const Hotels = () => {
   const { t } = useTranslation();
@@ -15,22 +16,11 @@ const Hotels = () => {
           {hotels.map((hotel) => (
             <Link key={hotel.id} to={`/hotel/${hotel.id}`} className="card group">
               <div className="h-64 overflow-hidden bg-gradient-to-br from-sand to-gray-200">
-                {hotel.mainImage ? (
-                  <img
-                    src={hotel.mainImage}
-                    alt={getLocaleText(hotel.name)}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-gray-400 text-center">
-                      <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                      <p className="text-sm">Hotel Image</p>
-                    </div>
-                  </div>
-                )}
+                <img
+                  src={hotel.mainImage || getHotelImage(hotel.id)}
+                  alt={getLocaleText(hotel.name)}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2 group-hover:text-ocean transition-colors">

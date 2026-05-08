@@ -1,17 +1,19 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import i18n from '../i18n';
 
 export const BookingContext = createContext();
 
 export const BookingProvider = ({ children }) => {
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState(() => i18n.language || 'en');
   const [currency, setCurrency] = useState('USD');
   const [exchangeRates, setExchangeRates] = useState({ USD: 1 });
   const [hotels, setHotels] = useState([]);
   const [services, setServices] = useState([]);
+  const [cart, setCart] = useState([]);
   const [booking, setBooking] = useState({
     hotel_id: null,
-    room_id: null,
+    rooms: [],
     check_in: '',
     check_out: '',
     guest_name: '',
@@ -27,6 +29,16 @@ export const BookingProvider = ({ children }) => {
     fetchServices();
   }, []);
 
+  useEffect(() => {
+    const handleLanguageChange = (lng) => {
+      setLanguage(lng);
+    };
+    i18n.on('languageChanged', handleLanguageChange);
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, []);
+
   const fetchExchangeRates = async () => {
     try {
       const response = await axios.get('/api/settings/exchange-rates');
@@ -38,26 +50,13 @@ export const BookingProvider = ({ children }) => {
 
   const fetchHotels = async () => {
     try {
+      console.log('Fetching hotels...');
       const response = await axios.get('/api/hotels');
       const hotelList = response.data.data || response.data;
+      console.log('Hotels fetched:', hotelList.length);
       
-      const hotelsWithImages = await Promise.all(
-        hotelList.map(async (hotel) => {
-          try {
-            const imagesResponse = await axios.get(`/api/images/hotel/${hotel.id}?category=banner`);
-            const images = imagesResponse.data.data || imagesResponse.data;
-            return {
-              ...hotel,
-              images: images.slice(0, 5),
-              mainImage: images[0]?.thumbnail_url || images[0]?.url || null
-            };
-          } catch (err) {
-            return { ...hotel, images: [], mainImage: null };
-          }
-        })
-      );
-      
-      setHotels(hotelsWithImages);
+      setHotels(hotelList);
+      console.log('Hotels state updated:', hotelList.length);
     } catch (error) {
       console.error('Error fetching hotels:', error);
     }
@@ -65,8 +64,12 @@ export const BookingProvider = ({ children }) => {
 
   const fetchServices = async () => {
     try {
+      console.log('Fetching services...');
       const response = await axios.get('/api/services');
-      setServices(response.data.data || response.data);
+      const serviceList = response.data.data || response.data;
+      console.log('Services fetched:', serviceList.length);
+      setServices(serviceList);
+      console.log('Services state updated:', serviceList.length);
     } catch (error) {
       console.error('Error fetching services:', error);
     }
@@ -79,7 +82,12 @@ export const BookingProvider = ({ children }) => {
 
   const getLocaleText = (obj) => {
     if (!obj) return '';
-    return obj[language] || obj.en || '';
+    try {
+      const parsed = typeof obj === 'string' ? JSON.parse(obj) : obj;
+      return parsed[language] || parsed.en || '';
+    } catch {
+      return typeof obj === 'object' ? (obj[language] || obj.en || '') : obj;
+    }
   };
 
   const updateBooking = (data) => {
@@ -89,7 +97,7 @@ export const BookingProvider = ({ children }) => {
   const resetBooking = () => {
     setBooking({
       hotel_id: null,
-      room_id: null,
+      rooms: [],
       check_in: '',
       check_out: '',
       guest_name: '',
@@ -109,6 +117,8 @@ export const BookingProvider = ({ children }) => {
       exchangeRates,
       hotels,
       services,
+      cart,
+      setCart,
       booking,
       updateBooking,
       resetBooking,

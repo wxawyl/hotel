@@ -8,6 +8,7 @@ const Layout = ({ children }) => {
   const { logout } = useContext(AuthContext);
   const location = useLocation();
   const [language, setLanguage] = useState('en');
+  const [showLangMenu, setShowLangMenu] = useState(false);
 
   const languages = [
     { code: 'en', name: 'EN' },
@@ -19,6 +20,7 @@ const Layout = ({ children }) => {
     { path: '/', label: 'nav.dashboard' },
     { path: '/hotels', label: 'nav.hotels' },
     { path: '/rooms', label: 'nav.rooms' },
+    { path: '/products', label: 'nav.products' },
     { path: '/images', label: 'nav.images' },
     { path: '/bookings', label: 'nav.bookings' },
     { path: '/services', label: 'nav.services' },
@@ -28,6 +30,7 @@ const Layout = ({ children }) => {
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     setLanguage(lang);
+    setShowLangMenu(false);
   };
 
   return (
@@ -51,40 +54,51 @@ const Layout = ({ children }) => {
             </Link>
           ))}
         </nav>
-        <div className="absolute bottom-0 left-0 right-0 p-4 space-y-3">
-          <div className="relative group">
-            <button className="w-full py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition text-left">
-              {language.toUpperCase()}
-            </button>
-            <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-              {languages.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => changeLanguage(lang.code)}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
-                    language === lang.code ? 'text-ocean font-medium' : 'text-gray-600'
-                  }`}
-                >
-                  {lang.name}
-                </button>
-              ))}
-            </div>
-          </div>
-          <button
-            onClick={logout}
-            className="w-full py-2 px-4 bg-red-600 hover:bg-red-700 rounded-lg transition"
-          >
-            {t('nav.logout')}
-          </button>
-        </div>
       </aside>
-      <main className="flex-1 overflow-auto">
-        <header className="bg-white shadow-sm p-4 flex justify-between items-center">
+      <main className="flex-1 overflow-auto flex flex-col">
+        <header className="bg-white shadow-sm px-6 py-3 flex justify-between items-center">
           <h2 className="text-lg font-semibold">
             {t(navItems.find((item) => item.path === location.pathname)?.label || 'nav.dashboard')}
           </h2>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <button
+                onClick={() => setShowLangMenu(!showLangMenu)}
+                className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition flex items-center gap-1"
+              >
+                <span>{language.toUpperCase()}</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {showLangMenu && (
+                <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border py-1 z-50 min-w-[80px]">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => changeLanguage(lang.code)}
+                      className={`block w-full text-left px-3 py-1.5 text-sm hover:bg-gray-100 ${
+                        language === lang.code ? 'text-ocean font-medium' : 'text-gray-600'
+                      }`}
+                    >
+                      {lang.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <button
+              onClick={logout}
+              className="p-2 text-gray-500 hover:text-red-600 hover:bg-gray-100 rounded-lg transition"
+              title={t('nav.logout')}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            </button>
+          </div>
         </header>
-        <div className="p-6">{children}</div>
+        <div className="flex-1 p-6 overflow-auto">{children}</div>
       </main>
     </div>
   );
