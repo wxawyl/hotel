@@ -34,7 +34,7 @@ const Images = () => {
   const fetchHotels = async () => {
     try {
       const response = await axios.get('/api/hotels');
-      const hotelList = response.data.value || response.data;
+      const hotelList = response.data.data || response.data;
       setHotels(hotelList);
       if (hotelList.length > 0) {
         setSelectedHotel(hotelList[0].id);
