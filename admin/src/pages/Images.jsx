@@ -60,6 +60,11 @@ const Images = () => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    if (!selectedHotel) {
+      alert('Please select a hotel first');
+      return;
+    }
+
     setUploading(true);
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
@@ -71,14 +76,18 @@ const Images = () => {
     }
 
     try {
-      await axios.post('/api/images/upload', formData, {
+      const response = await axios.post('/api/images/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+      console.log('Upload response:', response.data);
       fetchImages();
+      alert('Images uploaded successfully!');
     } catch (err) {
       console.error('Error uploading images:', err);
+      alert('Error uploading images: ' + (err.response?.data?.error || err.message));
     } finally {
       setUploading(false);
+      e.target.value = '';
     }
   };
 
@@ -151,14 +160,31 @@ const Images = () => {
             <label className="block text-sm font-medium mb-2">{t('images.upload')}</label>
             <input
               type="file"
+              id="image-upload"
               multiple
               accept="image/*"
               onChange={handleFileUpload}
-              disabled={uploading}
-              className="w-full"
+              disabled={uploading || !selectedHotel}
+              className="hidden"
             />
+            <label
+              htmlFor="image-upload"
+              className={`inline-block px-6 py-2 rounded-lg cursor-pointer transition ${
+                uploading || !selectedHotel
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-ocean text-white hover:bg-opacity-90'
+              }`}
+            >
+              {uploading ? 'Uploading...' : 'Choose Images'}
+            </label>
           </div>
         </div>
+        {uploading && (
+          <div className="mt-4 text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-ocean"></div>
+            <p className="mt-2 text-gray-600">Processing images...</p>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
