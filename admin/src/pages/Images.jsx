@@ -51,7 +51,7 @@ const Images = () => {
         url += `?category=${selectedCategory}`;
       }
       const response = await axios.get(url);
-      setImages(response.data);
+      setImages(response.data.data || response.data);
     } catch (err) {
       console.error('Error fetching images:', err);
     }

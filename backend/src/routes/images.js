@@ -75,9 +75,9 @@ router.get('/hotel/:hotelId', (req, res) => {
   
   db.all(query, params, (err, rows) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
-    res.json(rows);
+    res.json({ success: true, data: rows, count: rows.length });
   });
 });
 
@@ -85,9 +85,9 @@ router.get('/room/:roomId', (req, res) => {
   db.all('SELECT * FROM images WHERE room_id = ? AND is_hidden = 0 ORDER BY sort_order ASC', 
     [req.params.roomId], (err, rows) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
-    res.json(rows);
+    res.json({ success: true, data: rows, count: rows.length });
   });
 });
 
@@ -113,10 +113,10 @@ router.post('/upload', authenticateToken, upload.array('images', 20), async (req
       results.push({ ...processed, hotel_id, room_id, category });
     }
     
-    res.json({ message: 'Images uploaded successfully', images: results });
+    res.json({ success: true, data: results, message: 'Images uploaded successfully' });
   } catch (error) {
     console.error('Upload error:', error);
-    res.status(500).json({ error: 'Upload failed' });
+    res.status(500).json({ success: false, error: 'Upload failed' });
   }
 });
 
@@ -127,7 +127,7 @@ router.put('/reorder', authenticateToken, (req, res) => {
     db.run('UPDATE images SET sort_order = ? WHERE id = ?', [index, img.id]);
   });
   
-  res.json({ message: 'Images reordered' });
+  res.json({ success: true, message: 'Images reordered' });
 });
 
 router.put('/:id', authenticateToken, (req, res) => {
@@ -137,9 +137,9 @@ router.put('/:id', authenticateToken, (req, res) => {
     [is_hidden, sort_order, category, req.params.id],
     function(err) {
       if (err) {
-        return res.status(500).json({ error: 'Database error' });
+        return res.status(500).json({ success: false, error: 'Database error' });
       }
-      res.json({ message: 'Image updated' });
+      res.json({ success: true, message: 'Image updated' });
     }
   );
 });
@@ -147,7 +147,7 @@ router.put('/:id', authenticateToken, (req, res) => {
 router.delete('/:id', authenticateToken, (req, res) => {
   db.get('SELECT * FROM images WHERE id = ?', [req.params.id], (err, image) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
     if (image) {
       const basePath = path.join(__dirname, '../../');
@@ -157,9 +157,9 @@ router.delete('/:id', authenticateToken, (req, res) => {
     
     db.run('DELETE FROM images WHERE id = ?', [req.params.id], function(err) {
       if (err) {
-        return res.status(500).json({ error: 'Database error' });
+        return res.status(500).json({ success: false, error: 'Database error' });
       }
-      res.json({ message: 'Image deleted' });
+      res.json({ success: true, message: 'Image deleted' });
     });
   });
 });

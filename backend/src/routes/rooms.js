@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/hotel/:hotelId', (req, res) => {
   db.all('SELECT * FROM rooms WHERE hotel_id = ? AND is_active = 1', [req.params.hotelId], (err, rows) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
     const rooms = rows.map(row => ({
       ...row,
@@ -15,7 +15,7 @@ router.get('/hotel/:hotelId', (req, res) => {
       description: JSON.parse(row.description),
       facilities: JSON.parse(row.facilities)
     }));
-    res.json(rooms);
+    res.json({ success: true, data: rooms, count: rooms.length });
   });
 });
 
@@ -26,9 +26,9 @@ router.post('/', authenticateToken, (req, res) => {
     [hotel_id, JSON.stringify(name), JSON.stringify(description), capacity, area, JSON.stringify(facilities), price],
     function(err) {
       if (err) {
-        return res.status(500).json({ error: 'Database error' });
+        return res.status(500).json({ success: false, error: 'Database error' });
       }
-      res.json({ id: this.lastID, ...req.body });
+      res.json({ success: true, data: { id: this.lastID, ...req.body }, message: 'Room created' });
     }
   );
 });
@@ -40,9 +40,9 @@ router.put('/:id', authenticateToken, (req, res) => {
     [JSON.stringify(name), JSON.stringify(description), capacity, area, JSON.stringify(facilities), price, is_active, req.params.id],
     function(err) {
       if (err) {
-        return res.status(500).json({ error: 'Database error' });
+        return res.status(500).json({ success: false, error: 'Database error' });
       }
-      res.json({ message: 'Room updated' });
+      res.json({ success: true, message: 'Room updated' });
     }
   );
 });
@@ -50,9 +50,9 @@ router.put('/:id', authenticateToken, (req, res) => {
 router.delete('/:id', authenticateToken, (req, res) => {
   db.run('UPDATE rooms SET is_active = 0 WHERE id = ?', [req.params.id], function(err) {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
-    res.json({ message: 'Room deleted' });
+    res.json({ success: true, message: 'Room deleted' });
   });
 });
 

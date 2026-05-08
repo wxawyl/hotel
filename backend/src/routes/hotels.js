@@ -1,4 +1,5 @@
 const express = require('express');
+const { body, validationResult } = require('express-validator');
 const db = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
 
@@ -7,7 +8,7 @@ const router = express.Router();
 router.get('/', (req, res) => {
   db.all('SELECT * FROM hotels WHERE is_active = 1', [], (err, rows) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
     const hotels = rows.map(row => ({
       ...row,
@@ -16,29 +17,40 @@ router.get('/', (req, res) => {
       tags: JSON.parse(row.tags),
       distance_info: JSON.parse(row.distance_info)
     }));
-    res.json(hotels);
+    res.json({ success: true, data: hotels, count: hotels.length });
   });
 });
 
 router.get('/:id', (req, res) => {
   db.get('SELECT * FROM hotels WHERE id = ?', [req.params.id], (err, hotel) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
     if (!hotel) {
-      return res.status(404).json({ error: 'Hotel not found' });
+      return res.status(404).json({ success: false, error: 'Hotel not found' });
     }
     res.json({
-      ...hotel,
-      name: JSON.parse(hotel.name),
-      description: JSON.parse(hotel.description),
-      tags: JSON.parse(hotel.tags),
-      distance_info: JSON.parse(hotel.distance_info)
+      success: true,
+      data: {
+        ...hotel,
+        name: JSON.parse(hotel.name),
+        description: JSON.parse(hotel.description),
+        tags: JSON.parse(hotel.tags),
+        distance_info: JSON.parse(hotel.distance_info)
+      }
     });
   });
 });
 
-router.post('/', authenticateToken, (req, res) => {
+router.post('/', authenticateToken, [
+  body('name').isObject().withMessage('Name must be an object'),
+  body('location').notEmpty().withMessage('Location is required')
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, error: errors.array()[0].msg });
+  }
+  
   const { name, description, location, tags, distance_info } = req.body;
   db.run(
     'INSERT INTO hotels (name, description, location, tags, distance_info) VALUES (?, ?, ?, ?, ?)',
@@ -51,9 +63,9 @@ router.post('/', authenticateToken, (req, res) => {
     ],
     function(err) {
       if (err) {
-        return res.status(500).json({ error: 'Database error' });
+        return res.status(500).json({ success: false, error: 'Database error' });
       }
-      res.json({ id: this.lastID, ...req.body });
+      res.json({ success: true, data: { id: this.lastID, ...req.body }, message: 'Hotel created' });
     }
   );
 });
@@ -73,9 +85,9 @@ router.put('/:id', authenticateToken, (req, res) => {
     ],
     function(err) {
       if (err) {
-        return res.status(500).json({ error: 'Database error' });
+        return res.status(500).json({ success: false, error: 'Database error' });
       }
-      res.json({ message: 'Hotel updated' });
+      res.json({ success: true, message: 'Hotel updated' });
     }
   );
 });
@@ -83,9 +95,9 @@ router.put('/:id', authenticateToken, (req, res) => {
 router.delete('/:id', authenticateToken, (req, res) => {
   db.run('UPDATE hotels SET is_active = 0 WHERE id = ?', [req.params.id], function(err) {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
-    res.json({ message: 'Hotel deleted' });
+    res.json({ success: true, message: 'Hotel deleted' });
   });
 });
 

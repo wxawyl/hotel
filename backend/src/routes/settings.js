@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', (req, res) => {
   db.all('SELECT * FROM site_settings', [], (err, rows) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
     const settings = {};
     rows.forEach(row => {
@@ -17,20 +17,20 @@ router.get('/', (req, res) => {
         settings[row.key] = row.value;
       }
     });
-    res.json(settings);
+    res.json({ success: true, data: settings });
   });
 });
 
 router.get('/exchange-rates', (req, res) => {
   db.all('SELECT * FROM exchange_rates', [], (err, rows) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
     const rates = {};
     rows.forEach(row => {
       rates[row.currency] = row.rate_to_usd;
     });
-    res.json(rates);
+    res.json({ success: true, data: rates });
   });
 });
 
@@ -42,7 +42,7 @@ router.put('/exchange-rates', authenticateToken, (req, res) => {
       [rate, currency]
     );
   });
-  res.json({ message: 'Rates updated' });
+  res.json({ success: true, message: 'Rates updated' });
 });
 
 router.put('/', authenticateToken, (req, res) => {
@@ -54,7 +54,7 @@ router.put('/', authenticateToken, (req, res) => {
       [key, valueStr]
     );
   });
-  res.json({ message: 'Settings updated' });
+  res.json({ success: true, message: 'Settings updated' });
 });
 
 module.exports = router;

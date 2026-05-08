@@ -30,7 +30,7 @@ export const BookingProvider = ({ children }) => {
   const fetchExchangeRates = async () => {
     try {
       const response = await axios.get('/api/settings/exchange-rates');
-      setExchangeRates(response.data);
+      setExchangeRates(response.data.data || response.data);
     } catch (error) {
       console.error('Error fetching rates:', error);
     }
@@ -39,7 +39,7 @@ export const BookingProvider = ({ children }) => {
   const fetchHotels = async () => {
     try {
       const response = await axios.get('/api/hotels');
-      setHotels(response.data);
+      setHotels(response.data.data || response.data);
     } catch (error) {
       console.error('Error fetching hotels:', error);
     }
@@ -48,7 +48,7 @@ export const BookingProvider = ({ children }) => {
   const fetchServices = async () => {
     try {
       const response = await axios.get('/api/services');
-      setServices(response.data);
+      setServices(response.data.data || response.data);
     } catch (error) {
       console.error('Error fetching services:', error);
     }

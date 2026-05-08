@@ -7,14 +7,14 @@ const router = express.Router();
 router.get('/', (req, res) => {
   db.all('SELECT * FROM services WHERE is_active = 1', [], (err, rows) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
     const services = rows.map(row => ({
       ...row,
       name: JSON.parse(row.name),
       description: JSON.parse(row.description)
     }));
-    res.json(services);
+    res.json({ success: true, data: services, count: services.length });
   });
 });
 
@@ -25,9 +25,9 @@ router.post('/', authenticateToken, (req, res) => {
     [JSON.stringify(name), JSON.stringify(description), price],
     function(err) {
       if (err) {
-        return res.status(500).json({ error: 'Database error' });
+        return res.status(500).json({ success: false, error: 'Database error' });
       }
-      res.json({ id: this.lastID, ...req.body });
+      res.json({ success: true, data: { id: this.lastID, ...req.body }, message: 'Service created' });
     }
   );
 });
@@ -39,9 +39,9 @@ router.put('/:id', authenticateToken, (req, res) => {
     [JSON.stringify(name), JSON.stringify(description), price, is_active, req.params.id],
     function(err) {
       if (err) {
-        return res.status(500).json({ error: 'Database error' });
+        return res.status(500).json({ success: false, error: 'Database error' });
       }
-      res.json({ message: 'Service updated' });
+      res.json({ success: true, message: 'Service updated' });
     }
   );
 });
@@ -49,9 +49,9 @@ router.put('/:id', authenticateToken, (req, res) => {
 router.delete('/:id', authenticateToken, (req, res) => {
   db.run('UPDATE services SET is_active = 0 WHERE id = ?', [req.params.id], function(err) {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
-    res.json({ message: 'Service deleted' });
+    res.json({ success: true, message: 'Service deleted' });
   });
 });
 
