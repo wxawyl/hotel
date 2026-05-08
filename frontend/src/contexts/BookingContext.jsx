@@ -39,7 +39,25 @@ export const BookingProvider = ({ children }) => {
   const fetchHotels = async () => {
     try {
       const response = await axios.get('/api/hotels');
-      setHotels(response.data.data || response.data);
+      const hotelList = response.data.data || response.data;
+      
+      const hotelsWithImages = await Promise.all(
+        hotelList.map(async (hotel) => {
+          try {
+            const imagesResponse = await axios.get(`/api/images/hotel/${hotel.id}?category=banner`);
+            const images = imagesResponse.data.data || imagesResponse.data;
+            return {
+              ...hotel,
+              images: images.slice(0, 5),
+              mainImage: images[0]?.thumbnail_url || images[0]?.url || null
+            };
+          } catch (err) {
+            return { ...hotel, images: [], mainImage: null };
+          }
+        })
+      );
+      
+      setHotels(hotelsWithImages);
     } catch (error) {
       console.error('Error fetching hotels:', error);
     }
