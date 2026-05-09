@@ -18,6 +18,10 @@ database/*.db-wal
 # Uploads
 backend/uploads/
 
+# Data backup - exclude dated backups but include latest
+data-backup/*.json
+!data-backup/hotel-data-latest.json
+
 # IDE
 .vscode/
 .idea/
