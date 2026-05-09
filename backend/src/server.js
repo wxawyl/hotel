@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 if (!process.env.JWT_SECRET) {
   console.warn('WARNING: JWT_SECRET environment variable is not set, using default secret for development');
@@ -14,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ['https://your-domain.com', 'https://www.your-domain.com', 'https://*.vercel.app']
+  ? ['https://hotel-9jnt.onrender.com', 'https://your-domain.com', 'https://www.your-domain.com', 'https://*.vercel.app']
   : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176'];
 
 const corsOptions = {
@@ -34,8 +35,11 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 const frontendPath = path.join(__dirname, '../../frontend/dist');
-if (process.env.NODE_ENV === 'production') {
+if (fs.existsSync(frontendPath)) {
   app.use(express.static(frontendPath));
+  console.log(`Serving frontend from: ${frontendPath}`);
+} else {
+  console.log(`Frontend dist not found at: ${frontendPath}`);
 }
 
 app.use('/api/auth', require('./routes/auth'));
@@ -52,7 +56,7 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok' } });
 });
 
-if (process.env.NODE_ENV === 'production') {
+if (fs.existsSync(frontendPath)) {
   app.get('*', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
   });
