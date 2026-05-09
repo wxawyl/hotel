@@ -42,6 +42,14 @@ if (fs.existsSync(frontendPath)) {
   console.log(`Frontend dist not found at: ${frontendPath}`);
 }
 
+const adminPath = path.join(__dirname, '../../admin/dist');
+if (fs.existsSync(adminPath)) {
+  app.use('/admin', express.static(adminPath));
+  console.log(`Serving admin from: ${adminPath}`);
+} else {
+  console.log(`Admin dist not found at: ${adminPath}`);
+}
+
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/hotels', require('./routes/hotels'));
 app.use('/api/rooms', require('./routes/rooms'));
@@ -55,6 +63,12 @@ app.use('/api/chatbot', require('./routes/chatbot'));
 app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok' } });
 });
+
+if (fs.existsSync(adminPath)) {
+  app.get('/admin/*', (req, res) => {
+    res.sendFile(path.join(adminPath, 'index.html'));
+  });
+}
 
 if (fs.existsSync(frontendPath)) {
   app.get('*', (req, res) => {
