@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: hotel-app
+    env: docker
+    plan: starter
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "5000"
