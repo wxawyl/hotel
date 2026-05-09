@@ -14,4 +14,7 @@ RUN cd frontend && npm run build
 
 EXPOSE 5000
 
-CMD ["node", "backend/src/server.js"]
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+CMD ["sh", "/app/entrypoint.sh"]
