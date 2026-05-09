@@ -7,9 +7,112 @@ const db = new sqlite3.Database(dbPath, (err) => {
     console.error('Error opening database:', err);
   } else {
     console.log('Connected to SQLite database');
-    initAllData();
+    createTables().then(() => {
+      initAllData();
+    });
   }
 });
+
+const createTables = () => {
+  return new Promise((resolve) => {
+    db.serialize(() => {
+      db.run(`CREATE TABLE IF NOT EXISTS hotels (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        description TEXT,
+        location TEXT,
+        tags TEXT,
+        distance_info TEXT,
+        is_active INTEGER DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`);
+
+      db.run(`CREATE TABLE IF NOT EXISTS rooms (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        hotel_id INTEGER,
+        name TEXT NOT NULL,
+        description TEXT,
+        capacity INTEGER,
+        area INTEGER,
+        facilities TEXT,
+        price REAL,
+        is_active INTEGER DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (hotel_id) REFERENCES hotels(id)
+      )`);
+
+      db.run(`CREATE TABLE IF NOT EXISTS images (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        hotel_id INTEGER,
+        room_id INTEGER,
+        url TEXT,
+        thumbnail_url TEXT,
+        category TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (hotel_id) REFERENCES hotels(id),
+        FOREIGN KEY (room_id) REFERENCES rooms(id)
+      )`);
+
+      db.run(`CREATE TABLE IF NOT EXISTS services (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        name_locale TEXT,
+        description TEXT,
+        description_locale TEXT,
+        icon TEXT,
+        price REAL,
+        is_active INTEGER DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`);
+
+      db.run(`CREATE TABLE IF NOT EXISTS products (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        name_locale TEXT,
+        description TEXT,
+        description_locale TEXT,
+        price REAL,
+        category TEXT,
+        image_url TEXT,
+        stock INTEGER DEFAULT 1,
+        stock_quantity INTEGER DEFAULT 100,
+        is_active INTEGER DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`);
+
+      db.run(`CREATE TABLE IF NOT EXISTS bookings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        hotel_id INTEGER,
+        room_id INTEGER,
+        guest_name TEXT,
+        guest_email TEXT,
+        check_in DATE,
+        check_out DATE,
+        guests INTEGER,
+        total_price REAL,
+        status TEXT DEFAULT 'pending',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (hotel_id) REFERENCES hotels(id),
+        FOREIGN KEY (room_id) REFERENCES rooms(id)
+      )`);
+
+      db.run(`CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        email TEXT,
+        role TEXT DEFAULT 'user',
+        is_active INTEGER DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`);
+
+      console.log('✓ All tables created or already exist');
+      resolve();
+    });
+  });
+};
 
 const hotels = [
   {
