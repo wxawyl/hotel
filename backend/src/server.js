@@ -4,8 +4,8 @@ const cors = require('cors');
 const path = require('path');
 
 if (!process.env.JWT_SECRET) {
-  console.error('ERROR: JWT_SECRET environment variable is not set');
-  process.exit(1);
+  console.warn('WARNING: JWT_SECRET environment variable is not set, using default secret for development');
+  process.env.JWT_SECRET = 'default-development-secret-change-in-production';
 }
 
 const app = express();
