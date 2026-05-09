@@ -34,9 +34,10 @@ function Products() {
       const response = await fetch('/api/products');
       const result = await response.json();
       const data = result.data || result;
-      setProducts(data);
+      setProducts(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching products:', error);
+      setProducts([]);
     }
   };
 

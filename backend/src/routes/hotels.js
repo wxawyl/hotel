@@ -52,22 +52,34 @@ router.post('/', authenticateToken, [
   }
   
   const { name, description, location, tags, distance_info } = req.body;
-  db.run(
-    'INSERT INTO hotels (name, description, location, tags, distance_info) VALUES (?, ?, ?, ?, ?)',
-    [
-      JSON.stringify(name),
-      JSON.stringify(description),
-      location,
-      JSON.stringify(tags),
-      JSON.stringify(distance_info)
-    ],
-    function(err) {
-      if (err) {
-        return res.status(500).json({ success: false, error: 'Database error' });
-      }
-      res.json({ success: true, data: { id: this.lastID, ...req.body }, message: 'Hotel created' });
+  
+  // 检查是否已存在同名酒店
+  db.get('SELECT id FROM hotels WHERE name = ?', [JSON.stringify(name)], (err, existing) => {
+    if (err) {
+      return res.status(500).json({ success: false, error: 'Database error' });
     }
-  );
+    if (existing) {
+      return res.status(400).json({ success: false, error: 'Hotel with this name already exists' });
+    }
+    
+    // 插入新酒店
+    db.run(
+      'INSERT INTO hotels (name, description, location, tags, distance_info) VALUES (?, ?, ?, ?, ?)',
+      [
+        JSON.stringify(name),
+        JSON.stringify(description),
+        location,
+        JSON.stringify(tags),
+        JSON.stringify(distance_info)
+      ],
+      function(err) {
+        if (err) {
+          return res.status(500).json({ success: false, error: 'Database error' });
+        }
+        res.json({ success: true, data: { id: this.lastID, ...req.body }, message: 'Hotel created' });
+      }
+    );
+  });
 });
 
 router.put('/:id', authenticateToken, (req, res) => {

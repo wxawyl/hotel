@@ -73,19 +73,30 @@ router.post('/', (req, res) => {
     return res.status(400).json({ success: false, message: 'Name and price are required' });
   }
   
-  db.run(
-    'INSERT INTO products (name, name_locale, description, description_locale, price, category, image_url, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [name, name_locale, description, description_locale, price, category, image_url, stock || 0],
-    function(err) {
-      if (err) {
-        res.status(500).json({ success: false, error: err.message });
-      } else {
-        db.get('SELECT * FROM products WHERE id = ?', [this.lastID], (err, row) => {
-          res.status(201).json({ success: true, data: row });
-        });
-      }
+  // 检查是否已存在同名商品
+  db.get('SELECT id FROM products WHERE name = ?', [name], (err, existing) => {
+    if (err) {
+      return res.status(500).json({ success: false, error: err.message });
     }
-  );
+    if (existing) {
+      return res.status(400).json({ success: false, message: 'Product with this name already exists' });
+    }
+    
+    // 插入新商品
+    db.run(
+      'INSERT INTO products (name, name_locale, description, description_locale, price, category, image_url, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [name, name_locale, description, description_locale, price, category, image_url, stock || 0],
+      function(err) {
+        if (err) {
+          res.status(500).json({ success: false, error: err.message });
+        } else {
+          db.get('SELECT * FROM products WHERE id = ?', [this.lastID], (err, row) => {
+            res.status(201).json({ success: true, data: row });
+          });
+        }
+      }
+    );
+  });
 });
 
 router.put('/:id', (req, res) => {

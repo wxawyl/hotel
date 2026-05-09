@@ -68,7 +68,7 @@ const products = [
 db.serialize(() => {
   products.forEach((product, index) => {
     db.run(
-      'INSERT INTO products (name, name_locale, description, description_locale, price, category, image_url, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT OR IGNORE INTO products (name, name_locale, description, description_locale, price, category, image_url, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       [product.name, product.name_locale, product.description, product.description_locale, product.price, product.category, product.image_url, product.stock],
       function(err) {
         if (err) {

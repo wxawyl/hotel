@@ -20,9 +20,12 @@ const Services = () => {
   const fetchServices = async () => {
     try {
       const response = await axios.get('/api/services');
-      setServices(response.data.data || response.data);
+      // 确保正确获取数据数组
+      const data = response.data?.data || response.data;
+      setServices(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error fetching services:', err);
+      setServices([]);
     }
   };
 

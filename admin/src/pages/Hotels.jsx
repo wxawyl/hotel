@@ -22,9 +22,12 @@ const Hotels = () => {
   const fetchHotels = async () => {
     try {
       const response = await axios.get('/api/hotels');
-      setHotels(response.data.data || response.data);
+      // 确保正确获取数据数组
+      const data = response.data?.data || response.data;
+      setHotels(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error fetching hotels:', err);
+      setHotels([]);
     }
   };
 

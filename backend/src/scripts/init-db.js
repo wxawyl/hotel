@@ -24,7 +24,8 @@ function initDatabase() {
       tags TEXT,
       distance_info TEXT,
       is_active INTEGER DEFAULT 1,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS rooms (
@@ -38,6 +39,7 @@ function initDatabase() {
       price REAL,
       is_active INTEGER DEFAULT 1,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (hotel_id) REFERENCES hotels(id)
     )`);
 
@@ -87,8 +89,14 @@ function initDatabase() {
     db.run(`CREATE TABLE IF NOT EXISTS products (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
+      name_locale TEXT,
       description TEXT,
+      description_locale TEXT,
+      price REAL,
       category TEXT,
+      image_url TEXT,
+      stock INTEGER DEFAULT 0,
+      stock_quantity INTEGER DEFAULT 0,
       is_active INTEGER DEFAULT 1,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
@@ -149,7 +157,10 @@ function initDatabase() {
         [rate.currency, rate.rate]);
     });
 
-    insertDefaultData();
+    setTimeout(() => {
+      console.log('Database initialization complete');
+      db.close();
+    }, 1000);
   });
 }
 
