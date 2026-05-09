@@ -51,6 +51,7 @@ const createTables = () => {
         thumbnail_url TEXT,
         category TEXT,
         sort_order INTEGER DEFAULT 0,
+        is_hidden INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (hotel_id) REFERENCES hotels(id),
         FOREIGN KEY (room_id) REFERENCES rooms(id)
